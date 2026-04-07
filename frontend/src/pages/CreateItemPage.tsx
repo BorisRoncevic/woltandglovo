@@ -12,9 +12,7 @@ export default function CreateItemPage() {
     cena: ""
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleSubmit = async () => {
     try {
       await createItem(form);
       navigate("/"); 

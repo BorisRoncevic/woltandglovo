@@ -1,74 +1,70 @@
+import { buildHeaders } from "../context/http";
 const BASE_URL = "http://localhost:8080/orders";
 
-// 🔐 helper za JWT
-function getAuthHeaders() {
-  const token = localStorage.getItem("token");
+export async function completeOrder({ token }: { token: string | null }) {
+  const res = await fetch(`${BASE_URL}/complete`, {
+    method: "POST",
+    headers: buildHeaders({ token, guestId: null }),
+  });
 
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
-  };
+  if (!res.ok) {
+    throw new Error("Failed to complete order");
+  }
+
+  return res.json();
 }
 
-export async function completeOrder() {
-    const res = await fetch(`${BASE_URL}/complete`, {
-      method: "POST",
-      headers: getAuthHeaders()
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to complete order");
-    }
-  
-    return res.json();
+export async function getMyOrders({ token }: { token: string | null }) {
+  const res = await fetch(`${BASE_URL}/myOrders`, {
+    headers: buildHeaders({ token, guestId: null }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch orders");
   }
 
-  export async function getMyOrders() {
-    const res = await fetch(`${BASE_URL}/myOrders`, {
-      headers: getAuthHeaders()
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to fetch orders");
-    }
-  
-    return res.json();
+  return res.json();
+}
+
+export async function getPendingOrders({ token }: { token: string | null }) {
+  const res = await fetch(`${BASE_URL}/pending`, {
+    headers: buildHeaders({ token, guestId: null }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch pending orders");
   }
 
-  export async function getPendingOrders() {
-    const res = await fetch(`${BASE_URL}/pending`, {
-      headers: getAuthHeaders()
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to fetch pending orders");
-    }
-  
-    return res.json();
+  return res.json();
+}
+
+export async function acceptOrder(
+  orderId: number,
+  { token }: { token: string | null }
+) {
+  const res = await fetch(`${BASE_URL}/${orderId}/accept`, {
+    method: "POST",
+    headers: buildHeaders({ token, guestId: null }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to accept order");
   }
 
+  return res.json();
+}
 
-  export async function acceptOrder(orderId:any) {
-    const res = await fetch(`${BASE_URL}/${orderId}/accept`, {
-      method: "POST",
-      headers: getAuthHeaders()
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to accept order");
-    }
-  
-    return res.json();
+export async function getOrderById(
+  id: number,
+  { token }: { token: string | null }
+) {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    headers: buildHeaders({ token, guestId: null }),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch order");
   }
 
-  export async function getOrderById(id:any) {
-    const res = await fetch(`${BASE_URL}/${id}`, {
-      headers: getAuthHeaders()
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to fetch order");
-    }
-  
-    return res.json();
-  }
+  return res.json();
+}

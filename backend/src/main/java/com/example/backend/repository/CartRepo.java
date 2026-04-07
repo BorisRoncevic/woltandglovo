@@ -9,6 +9,9 @@ import com.example.backend.model.Cart;
 @Repository
 public interface CartRepo extends JpaRepository<Cart, Long> {
     Cart findByUserId(Long userId);
+    Cart findByGuestId(String gusetId);
+
+
 
 
 

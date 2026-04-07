@@ -2,6 +2,7 @@ package com.example.backend.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.backend.model.AuthResponse;
 import com.example.backend.model.JwtUtil;
 import com.example.backend.model.LoginRequest;
 import com.example.backend.model.RegisterRequest;
@@ -26,7 +27,7 @@ public class AuthService {
 
 
 
-    public String login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
 
         User user = repo.findByUsername(request.username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -34,7 +35,8 @@ public class AuthService {
         if (!user.getPassword().equals(request.password)) {
             throw new RuntimeException("Wrong password");
         }
-        return JwtUtil.generateToken(user.getUsername());
+        String token =  JwtUtil.generateToken(user.getUsername());
+        return new AuthResponse(token,user.getUsername());
 
     }
 

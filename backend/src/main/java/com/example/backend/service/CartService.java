@@ -89,25 +89,114 @@ public class CartService {
     public Cart getCart(String username) {
 
         User user = repou.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        return repo.findByUserId(user.getId());
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    
+        Cart cart = repo.findByUserId(user.getId());
+    
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(user);
+            cart.setItems(new ArrayList<>());
+            return cart;
+        }
+    
+        if (cart.getItems() == null) {
+            cart.setItems(new ArrayList<>());
+        }
+    
+        return cart;
     }
 
+
+
+    public Cart ResolveCart(String username,String guestId ) {
+        if(username != null) {
+            User user = repou.findByUsername(username).orElseThrow(()-> new RuntimeException("ne"));
+            return repo.findByUserId(user.getId());
+        }
+        if(guestId!= null ) {
+            return repo.findByGuestId(guestId);
+        }
+
+        return null;
+    }
+
+    private Cart resolveOrCreateCart(String username, String guestId) {
+
+        Cart cart = ResolveCart(username, guestId);
+
+        if (cart != null) return cart;
+
+        cart = new Cart();
+        cart.setItems(new ArrayList<>());
+
+        if (username != null) {
+            User user = repou.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            cart.setUser(user);
+        } else {
+            cart.setGuestId(guestId);
+        }
+
+        return repo.save(cart);
+    }
     public void delete(String username, Long itemId) {
 
         User user = repou.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+    
         Cart cart = repo.findByUserId(user.getId());
-
+    
+        if (cart == null || cart.getItems() == null) {
+            throw new RuntimeException("Cart is empty");
+        }
+    
         CartItem itemToRemove = cart.getItems().stream()
                 .filter(ci -> ci.getItem().getId().equals(itemId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Item not in cart"));
-
+    
         cart.getItems().remove(itemToRemove);
-
+    
         repo.save(cart);
     }
+
+
+    public void MergeCart(String username,String guestId ) {
+        if (username == null || guestId == null) return;
+        User user = repou.findByUsername(username).orElseThrow(() -> new RuntimeException("aa"));
+
+
+        Cart guestCart = repo.findByGuestId(guestId);
+        Cart userCart = repo.findByUserId(user.getId());
+
+        if(guestCart== null) return;
+
+        if(userCart == null) {
+            userCart.setUser(user);
+            userCart.setGuestId(null);
+            repo.save(guestCart);
+        }
+
+
+        for (CartItem guestItem : guestCart.getItems() ){
+            CartItem existing = userCart.getItems().stream().filter(ci -> ci.getItem().getId().equals(guestItem.getItem().getId()))
+            .findFirst().orElse(null);
+        
+            if(existing!= null) {
+                existing.setQuantity(existing.getQuantity() + guestItem.getQuantity());
+
+            } else {
+                guestItem.setCart(userCart);
+                userCart.getItems().add(guestItem);
+            }
+
+            repo.delete(guestCart);
+            repo.save(userCart);
+
+        }
+    }
+
+
 }

@@ -26,19 +26,18 @@ public class RestaurantController {
         this.service = service;
     }
 
-    // ✅ svi restorani
+   
     @GetMapping
     public List<Restaurant> getAll() {
         return service.findAll();
     }
 
-    // ✅ restoran po id
+    
     @GetMapping("/{id}")
     public Restaurant getById(@PathVariable long id) {
         return service.findbyId(id);
     }
 
-    // ✅ kreiranje restorana
     @PostMapping
     public Restaurant create(HttpServletRequest request,@RequestBody Restaurant res) {
 
@@ -51,19 +50,16 @@ public class RestaurantController {
         return service.createRestaurant(username,res);
     }
 
-    // ✅ brisanje
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         service.deletebyId(id);
     }
 
-    // ✅ Novi Sad
     @GetMapping("/novisad")
     public List<Restaurant> getNoviSad() {
         return service.getNoviSad();
     }
 
-    // ✅ Beograd
     @GetMapping("/beograd")
     public List<Restaurant> getBeograd() {
         return service.getBeograd();

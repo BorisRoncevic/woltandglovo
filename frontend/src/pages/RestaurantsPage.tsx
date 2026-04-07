@@ -4,9 +4,13 @@ import { getRestaurantsByCity } from "../api/restaurantApi";
 
 export default function RestaurantsPage() {
 
-  const { city } = useParams();
-  const [restaurants, setRestaurants] = useState([]);
+  type Restaurant = {
+    id: number;
+    name: string;
+  };
 
+  const { city } = useParams();
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   useEffect(() => {
     getRestaurantsByCity(city).then(setRestaurants);
   }, [city]);

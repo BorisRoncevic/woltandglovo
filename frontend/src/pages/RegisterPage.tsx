@@ -22,7 +22,6 @@ export default function RegisterPage() {
     try {
       await register(form);
 
-      // 🔥 nakon registracije → login page
       navigate("/login");
 
     } catch (err) {

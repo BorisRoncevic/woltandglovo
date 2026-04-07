@@ -14,8 +14,7 @@ export default function CreateRestaurantPage() {
 
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
 
     try {
       await createRestaurant(form);
@@ -31,7 +30,6 @@ export default function CreateRestaurantPage() {
 
       <form onSubmit={handleSubmit}>
 
-        {/* NAME */}
         <input
           placeholder="Naziv restorana"
           value={form.name}
@@ -41,7 +39,6 @@ export default function CreateRestaurantPage() {
           style={{ display: "block", marginBottom: "10px", width: "100%" }}
         />
 
-        {/* CITY */}
         <select
           value={form.city}
           onChange={(e) =>
@@ -53,7 +50,6 @@ export default function CreateRestaurantPage() {
           <option value="BEOGRAD">Beograd</option>
         </select>
 
-        {/* LOCATION */}
         <input
           placeholder="Adresa (npr. Bulevar Oslobođenja 10)"
           value={form.location}

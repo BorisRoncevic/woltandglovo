@@ -29,7 +29,7 @@ public class OrderController {
         //this.repo = repo;
     }
 
-    // ✅ svi orderi
+   
     @GetMapping("/myOrders")
     public List<Order> getMyOrders(HttpServletRequest request) {
 
@@ -40,25 +40,24 @@ public class OrderController {
         
     }
 
-    // ✅ order po id
     @GetMapping("/{id}")
     public Order getById(@PathVariable Long id) {
         return service.findbyId(id);
     }
 
-    // ✅ delete
+ 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.deletebyId(id);
     }
 
-    // ✅ create (ručno)
+    
     @PostMapping
     public Order create(@RequestBody Order order) {
         return service.save(order);
     }
 
-    // 🔥 NAJBITNIJI ENDPOINT — complete order
+    
     @PostMapping("/complete")
     public Order completeOrder(HttpServletRequest request) {
     
