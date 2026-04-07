@@ -23,32 +23,33 @@ public class ItemController {
         this.service = service;
     }
 
-    // ✅ svi itemi
+
     @GetMapping
     public List<Item> getAll() {
         return service.findAll();
     }
 
-    // ✅ item po id
+ 
     @GetMapping("/{id}")
     public Item getById(@PathVariable Long id) {
-        return service.findbyId(id);
+        return service.findById(id);
     }
 
-    @GetMapping("/restaurant/{restoranId}")
-    public List<Item> getByRestaurant(@PathVariable Long restoranId) {
-        return service.getItemsByRestoran(restoranId);
+ 
+    @GetMapping("/restaurant/{restaurantId}")
+    public List<Item> getByRestaurant(@PathVariable Long restaurantId) {
+        return service.getItemsByRestaurant(restaurantId);
     }
 
-    // ✅ create item
+
     @PostMapping
     public Item create(@RequestBody Item item) {
         return service.save(item);
     }
 
-    // ✅ delete
+  
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.deletebyId(id);
+        service.deleteById(id);
     }
 }

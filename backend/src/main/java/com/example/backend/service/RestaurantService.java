@@ -19,65 +19,55 @@ import com.example.backend.repository.UserRepo;
 @Service
 public class RestaurantService {
 
+    private final RestaurantRepo restaurantRepo;
+    private final OrderRepo orderRepo;
+    private final UserRepo userRepo;
 
-    private final  RestaurantRepo repo;
-    private final OrderRepo repo2;
-    private final UserRepo repo3;
-
-    public RestaurantService(RestaurantRepo repo,OrderRepo repo2,UserRepo repo3) {
-        this.repo = repo;
-        this.repo2 = repo2;
-        this.repo3 = repo3;
+    public RestaurantService(RestaurantRepo restaurantRepo,
+                             OrderRepo orderRepo,
+                             UserRepo userRepo) {
+        this.restaurantRepo = restaurantRepo;
+        this.orderRepo = orderRepo;
+        this.userRepo = userRepo;
     }
 
-
-
-    public List<Restaurant> findAll(){
-        List<Restaurant> restorani = repo.findAll();
-        return restorani;
-
+   
+    public List<Restaurant> findAll() {
+        return restaurantRepo.findAll();
     }
 
-    public Restaurant findbyId(long id ) {
-        return repo.findById(id).orElse(new Restaurant());
+    public Restaurant findById(long id) {
+        return restaurantRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
     }
 
-    public void deletebyId(long id ) {
-        repo.deleteById(id);
+    public void deleteById(long id) {
+        if (!restaurantRepo.existsById(id)) {
+            throw new RuntimeException("Restaurant not found");
+        }
+        restaurantRepo.deleteById(id);
     }
 
     public Restaurant save(Restaurant res) {
-        return repo.save(res);
+        return restaurantRepo.save(res);
     }
 
-
-  
-    public List<Order> getPending() {
-        return repo2.findByStatus(OrderStatus.PENDING);
-    }
 
     public Restaurant createRestaurant(String username, Restaurant res) {
 
-        User user = repo3.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    
-        // ✔ veži restoran za user-a
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         res.setOwner(user);
-    
-        return repo.save(res);
+
+        return restaurantRepo.save(res);
     }
 
-    public List<Restaurant> getNoviSad() {
-        return repo.findByCity(City.Novi_Sad);
+    public List<Restaurant> getByCity(City city) {
+        return restaurantRepo.findByCity(city);
     }
 
-    public List<Restaurant> getBeograd() {
-        return repo.findByCity(City.Beograd);
+    public List<Order> getPendingOrders() {
+        return orderRepo.findByStatus(OrderStatus.PENDING);
     }
-
-
-
-
-
-
 }

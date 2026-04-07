@@ -25,49 +25,54 @@ public class CartController {
         this.service = service;
     }
 
-    // ✅ dodavanje itema u cart
     @PostMapping("/add")
     public void addToCart(HttpServletRequest request,
                           @RequestParam Long itemId) {
-    
-        String username = extractUsername(request);
-        service.addToCart(username, itemId);
+
+        String userKey = resolveUser(request);
+        service.addToCart(userKey, itemId);
     }
 
-    // ✅ dohvati cart (ako dodaš metodu u service)
     @GetMapping
     public Cart getCart(HttpServletRequest request) {
-        String username = extractUsername(request);
-        return service.getCart(username);
+        String userKey = resolveUser(request);
+        return service.getCart(userKey);
     }
+
     @DeleteMapping("/delete")
     public void deleteItem(HttpServletRequest request,
                            @RequestParam Long itemId) {
-    
-        String username = extractUsername(request);
-        service.delete(username, itemId);
+
+        String userKey = resolveUser(request);
+        service.delete(userKey, itemId);
     }
-    private String extractUsername(HttpServletRequest request) {
+
+  
+    private String resolveUser(HttpServletRequest request) {
+
         String auth = request.getHeader("Authorization");
-    
-        if (auth == null || !auth.startsWith("Bearer ")) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Missing or invalid token"
-            );
+
+        if (auth != null && auth.startsWith("Bearer ")) {
+            try {
+                String token = auth.substring(7);
+                return JwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                throw new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED,
+                        "Invalid JWT"
+                );
+            }
         }
-    
-        try {
-            String token = auth.substring(7);
-            return JwtUtil.extractUsername(token);
-        } catch (Exception e) {
-            throw new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "Invalid JWT"
-            );
+
+        String guestId = request.getHeader("X-Guest-Id");
+
+        if (guestId != null && !guestId.isEmpty()) {
+            return "guest_" + guestId;
         }
+
+        throw new ResponseStatusException(
+                HttpStatus.UNAUTHORIZED,
+                "No identity provided"
+        );
     }
-
-    
 }
-

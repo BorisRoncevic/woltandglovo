@@ -45,8 +45,8 @@ public class OrderService {
 
 
     public Order findbyId(long id) {
-        return repo.findById(id).orElse(new Order());
-    }
+        return repo.findById(id)
+        .orElseThrow(() -> new RuntimeException("Order not found"));    }
 
     public void deletebyId(long id) {
         repo.deleteById(id);
@@ -57,14 +57,13 @@ public class OrderService {
     }
     public Order acceptOrder(String username, Long orderId) {
 
-        //User user = repo3.findByUsername(username)
-            //.orElseThrow(() -> new RuntimeException("User not found"));
+        User user = repo3.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
     
         Order order = repo.findById(orderId)
             .orElseThrow(() -> new RuntimeException("Order not found"));
     
         
-        // 🔥 3. status check
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new RuntimeException("Order not pending");
         }
@@ -79,14 +78,12 @@ public class OrderService {
         User user = repo3.findByUsername(username)
         .orElseThrow();
 
-        // 1. nadji cart
         Cart cart = repo2.findByUserId(user.getId());
     
         if (cart == null || cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
     
-        // 2. napravi order
         Order order = new Order();
         order.setRestaurant(cart.getRestaurant());
         order.setKorisnik(cart.getUser());
@@ -94,7 +91,6 @@ public class OrderService {
     
         List<OrderItem> orderItems = new ArrayList<>();
     
-        // 3. mapiraj CartItem → OrderItem
         for (CartItem ci : cart.getItems()) {
     
             OrderItem oi = new OrderItem();
@@ -108,10 +104,8 @@ public class OrderService {
     
         order.setItems(orderItems);
     
-        // 4. sacuvaj order (cascade ce sacuvati OrderItem)
         Order savedOrder = repo.save(order);
     
-        // 5. isprazni cart
         cart.getItems().clear();
         repo2.save(cart);
     

@@ -17,55 +17,66 @@ public class CartService {
 
     private final CartRepo repo;
     private final ItemRepo itemRepo;
-    private final UserRepo repou;
+    private final UserRepo userRepo;
 
-    public CartService(CartRepo repo, ItemRepo itemRepo, UserRepo repou) {
+    public CartService(CartRepo repo, ItemRepo itemRepo, UserRepo userRepo) {
         this.repo = repo;
         this.itemRepo = itemRepo;
-        this.repou = repou;
+        this.userRepo = userRepo;
     }
 
-    public Cart save(Cart cart) {
-        return repo.save(cart);
-    }
+    private Cart resolveOrCreateCart(String userKey) {
 
-    public void addToCart(String username, Long itemId) {
+        Cart cart;
 
-        // 1. user
-        User user = repou.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (userKey.startsWith("guest_")) {
+            String guestId = userKey.replace("guest_", "");
+            cart = repo.findByGuestId(guestId);
 
-        // 2. cart
-        Cart cart = repo.findByUserId(user.getId());
+            if (cart == null) {
+                cart = new Cart();
+                cart.setGuestId(guestId);
+                cart.setItems(new ArrayList<>());
+                return repo.save(cart);
+            }
 
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
-            cart.setItems(new ArrayList<>());
-            cart = repo.save(cart);
+        } else {
+            User user = userRepo.findByUsername(userKey)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            cart = repo.findByUserId(user.getId());
+
+            if (cart == null) {
+                cart = new Cart();
+                cart.setUser(user);
+                cart.setItems(new ArrayList<>());
+                return repo.save(cart);
+            }
         }
 
-        // zaštita ako items nije inicijalizovan
         if (cart.getItems() == null) {
             cart.setItems(new ArrayList<>());
         }
 
-        // 3. item
+        return cart;
+    }
+
+    public void addToCart(String userKey, Long itemId) {
+
+        Cart cart = resolveOrCreateCart(userKey);
+
         Item item = itemRepo.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
-        // 4. ako nema restoran
         if (cart.getRestaurant() == null) {
             cart.setRestaurant(item.getRestaurant());
         }
 
-        // 5. ako je drugi restoran → reset
         if (!cart.getRestaurant().getId().equals(item.getRestaurant().getId())) {
             cart.getItems().clear();
             cart.setRestaurant(item.getRestaurant());
         }
 
-        // 6. da li već postoji item
         CartItem existing = cart.getItems().stream()
                 .filter(ci -> ci.getItem().getId().equals(itemId))
                 .findFirst()
@@ -74,129 +85,70 @@ public class CartService {
         if (existing != null) {
             existing.setQuantity(existing.getQuantity() + 1);
         } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setCart(cart);
-            cartItem.setItem(item);
-            cartItem.setQuantity(1);
-
-            cart.getItems().add(cartItem);
+            CartItem ci = new CartItem();
+            ci.setCart(cart);
+            ci.setItem(item);
+            ci.setQuantity(1);
+            cart.getItems().add(ci);
         }
 
-        // 7. save
         repo.save(cart);
     }
 
-    public Cart getCart(String username) {
-
-        User user = repou.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    
-        Cart cart = repo.findByUserId(user.getId());
-    
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
-            cart.setItems(new ArrayList<>());
-            return cart;
-        }
-    
-        if (cart.getItems() == null) {
-            cart.setItems(new ArrayList<>());
-        }
-    
-        return cart;
+    public Cart getCart(String userKey) {
+        return resolveOrCreateCart(userKey);
     }
 
+    public void delete(String userKey, Long itemId) {
 
+        Cart cart = resolveOrCreateCart(userKey);
 
-    public Cart ResolveCart(String username,String guestId ) {
-        if(username != null) {
-            User user = repou.findByUsername(username).orElseThrow(()-> new RuntimeException("ne"));
-            return repo.findByUserId(user.getId());
-        }
-        if(guestId!= null ) {
-            return repo.findByGuestId(guestId);
-        }
-
-        return null;
-    }
-
-    private Cart resolveOrCreateCart(String username, String guestId) {
-
-        Cart cart = ResolveCart(username, guestId);
-
-        if (cart != null) return cart;
-
-        cart = new Cart();
-        cart.setItems(new ArrayList<>());
-
-        if (username != null) {
-            User user = repou.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            cart.setUser(user);
-        } else {
-            cart.setGuestId(guestId);
-        }
-
-        return repo.save(cart);
-    }
-    public void delete(String username, Long itemId) {
-
-        User user = repou.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    
-        Cart cart = repo.findByUserId(user.getId());
-    
-        if (cart == null || cart.getItems() == null) {
-            throw new RuntimeException("Cart is empty");
-        }
-    
         CartItem itemToRemove = cart.getItems().stream()
                 .filter(ci -> ci.getItem().getId().equals(itemId))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Item not in cart"));
-    
+
         cart.getItems().remove(itemToRemove);
-    
+
         repo.save(cart);
     }
 
+  
+    public void mergeCart(String username, String guestId) {
 
-    public void MergeCart(String username,String guestId ) {
         if (username == null || guestId == null) return;
-        User user = repou.findByUsername(username).orElseThrow(() -> new RuntimeException("aa"));
 
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart guestCart = repo.findByGuestId(guestId);
+        if (guestCart == null) return;
+
         Cart userCart = repo.findByUserId(user.getId());
 
-        if(guestCart== null) return;
-
-        if(userCart == null) {
-            userCart.setUser(user);
-            userCart.setGuestId(null);
+        if (userCart == null) {
+            guestCart.setUser(user);
+            guestCart.setGuestId(null);
             repo.save(guestCart);
+            return;
         }
 
+        for (CartItem guestItem : guestCart.getItems()) {
 
-        for (CartItem guestItem : guestCart.getItems() ){
-            CartItem existing = userCart.getItems().stream().filter(ci -> ci.getItem().getId().equals(guestItem.getItem().getId()))
-            .findFirst().orElse(null);
-        
-            if(existing!= null) {
+            CartItem existing = userCart.getItems().stream()
+                    .filter(ci -> ci.getItem().getId().equals(guestItem.getItem().getId()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (existing != null) {
                 existing.setQuantity(existing.getQuantity() + guestItem.getQuantity());
-
             } else {
                 guestItem.setCart(userCart);
                 userCart.getItems().add(guestItem);
             }
-
-            repo.delete(guestCart);
-            repo.save(userCart);
-
         }
+
+        repo.save(userCart);
+        repo.delete(guestCart); 
     }
-
-
 }

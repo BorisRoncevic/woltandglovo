@@ -17,32 +17,38 @@ public class ItemService {
     }
 
     public List<Item> findAll() {
-        List<Item> restorani = repo.findAll();
-        return restorani;
-
+        return repo.findAll();
     }
 
 
-    public Item findbyId(long id) {
-        return repo.findById(id).orElse(new Item());
+    public Item findById(long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
     }
 
-    public void deletebyId(long id) {
+ 
+    public void deleteById(long id) {
+        if (!repo.existsById(id)) {
+            throw new RuntimeException("Item not found");
+        }
         repo.deleteById(id);
     }
 
-    public Item save(Item res) {
-        return repo.save(res);
-    }
-    
-      public List<Item> getItemsByRestoran(Long restoranId) {
-        return repo.findByRestaurantId(restoranId);
+
+    public Item save(Item item) {
+        return repo.save(item);
     }
 
-
-
-    
-
+   
+    public List<Item> getItemsByRestaurant(Long restaurantId) {
+        return repo.findByRestaurantId(restaurantId);
+    }
 }
+
+
+
+    
+
+
 
 
