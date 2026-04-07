@@ -1,30 +1,34 @@
+import { buildHeaders, getAuth } from "../context/http";
+
 const BASE_URL = "http://localhost:8080/items";
 
-function getAuthHeaders() {
-  const token = localStorage.getItem("token");
 
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
-  };
-}
+export async function getItemsByRestaurant(restaurantId: number) {
+  const res = await fetch(`${BASE_URL}/restaurant/${restaurantId}`);
 
-
-export async function getItemsByRestaurant(restoranId:any) {
-    const res = await fetch(`${BASE_URL}/restaurant/${restoranId}`);
-    return res.json();
+  if (!res.ok) {
+    throw new Error("Failed to fetch items");
   }
 
-export async function getItemById(id:any) {
-  const res = await fetch(`${BASE_URL}/${id}`);
   return res.json();
 }
 
-export async function createItem(data:any) {
+
+export async function getItemById(id: number) {
+  const res = await fetch(`${BASE_URL}/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch item");
+  }
+
+  return res.json();
+}
+
+export async function createItem(data: any) {
   const res = await fetch(BASE_URL, {
     method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data)
+    headers: buildHeaders(getAuth()),
+    body: JSON.stringify(data),
   });
 
   if (!res.ok) {

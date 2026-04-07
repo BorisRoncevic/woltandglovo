@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getItemsByRestaurant } from "../api/itemApi";
 import { useCart } from "../context/CartContext";
+import ItemCard from "../components/ItemCard";
 
 export default function RestaurantDetails() {
 
@@ -20,23 +21,25 @@ export default function RestaurantDetails() {
   const { addItem } = useCart();
 
   useEffect(() => {
-    getItemsByRestaurant(id).then(setItems);
+    if (!id) return;
+  
+    const numericId = Number(id);
+  
+    if (isNaN(numericId)) return;
+  
+    getItemsByRestaurant(numericId).then(setItems);
   }, [id]);
 
   return (
     <div>
       <h2>Jelovnik</h2>
-
+  
       {items.map(item => (
-        <div key={item.id} style={{ border: "1px solid gray", margin: "10px", padding: "10px" }}>
-          <h4>{item.name}</h4>
-          <p>{item.description}</p>
-          <p>{item.price} RSD</p>
-
-          <button onClick={() => addItem(item.id)}>
-            Dodaj u korpu
-          </button>
-        </div>
+        <ItemCard 
+          key={item.id} 
+          item={item} 
+          onAdd={addItem} 
+        />
       ))}
     </div>
   );

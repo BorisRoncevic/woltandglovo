@@ -25,11 +25,13 @@ export interface CartContextValue {
 }
 
 export type CartItem = {
-  id: number;
+  item: {
+    id: number;
+    name: string;
+    cena: number;
+  };
   quantity: number;
-  name: string;
 };
-
 export type Cart = {
   items: CartItem[];
 };
@@ -49,7 +51,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setLoading(true);
 
     try {
-      const data = await getCart({ token, guestId });
+      const data = await getCart();
       setCart(data);
     } catch (err: any) {
       if (err.message === "Unauthorized") {
@@ -84,14 +86,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const addItem = async (itemId: number | string) => {
     if (!token && !guestId) return;
 
-    await addToCart(itemId, { token, guestId });
+    await addToCart(itemId);
     await loadCart();
   };
 
   const removeItem = async (itemId: number | string) => {
     if (!token && !guestId) return;
 
-    await removeFromCart(itemId, { token, guestId });
+    await removeFromCart(itemId);
     await loadCart();
   };
 
@@ -101,7 +103,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    await clearCart({ token, guestId });
+    await clearCart();
     setCart(null);
   };
 

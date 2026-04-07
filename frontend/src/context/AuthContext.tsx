@@ -79,7 +79,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(decodeToken(newToken));
   };
 
-  // 🔹 LOGOUT
   const logout = () => {
     localStorage.removeItem("token");
 
@@ -108,7 +107,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// 🔹 HOOK
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
 

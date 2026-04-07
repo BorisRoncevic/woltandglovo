@@ -14,15 +14,21 @@ export default function CreateRestaurantPage() {
 
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-
-    try {
-      await createRestaurant(form);
-      navigate("/my-restaurants");
-    } catch (err) {
-      setError("Greška pri kreiranju restorana");
+  export async function createRestaurant(data: any) {
+    const token = localStorage.getItem("token");
+  
+    const res = await fetch(BASE_URL, {
+      method: "POST",
+      headers: buildHeaders({ token, guestId: null }),
+      body: JSON.stringify(data),
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to create restaurant");
     }
-  };
+  
+    return res.json();
+  }
 
   return (
     <div style={{ maxWidth: "400px", margin: "50px auto" }}>

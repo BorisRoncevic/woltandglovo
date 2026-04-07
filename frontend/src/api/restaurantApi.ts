@@ -1,23 +1,31 @@
-import { buildHeaders } from "../context/http";
+import { buildHeaders, getAuth } from "../context/http";
+
 const BASE_URL = "http://localhost:8080/restaurants";
 
 export async function getRestaurantsByCity(city: string) {
-  const res = await fetch(`${BASE_URL}/${city}`);
+  const res = await fetch(`${BASE_URL}/city?city=${city}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch restaurants");
+  }
+
   return res.json();
 }
 
 export async function getRestaurantById(id: number) {
   const res = await fetch(`${BASE_URL}/${id}`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch restaurant");
+  }
+
   return res.json();
 }
 
-export async function createRestaurant(
-  data: any,
-  { token }: { token: string | null }
-) {
+export async function createRestaurant(data: any) {
   const res = await fetch(BASE_URL, {
     method: "POST",
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
     body: JSON.stringify(data),
   });
 

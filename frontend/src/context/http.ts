@@ -17,3 +17,10 @@ export function buildHeaders({
   
     return headers;
   }
+
+ export function getAuth() {
+    return {
+      token: localStorage.getItem("token"),
+      guestId: localStorage.getItem("guestId"),
+    };
+  }

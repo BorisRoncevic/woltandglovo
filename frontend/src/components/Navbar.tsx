@@ -11,11 +11,13 @@ export default function Navbar() {
 
   if (authLoading) return null;
 
-  const itemCount =
-    cart?.items?.reduce(
-      (sum: number, i: CartItem) => sum + i.quantity,
-      0
-    ) ?? 0;
+
+
+    const itemCount =
+  cart?.items?.reduce<number>(
+    (sum, i) => sum + i.quantity,
+    0
+  ) ?? 0;
 
   return (
     <nav className="navbar">

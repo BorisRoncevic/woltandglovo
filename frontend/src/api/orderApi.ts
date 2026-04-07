@@ -1,10 +1,12 @@
-import { buildHeaders } from "../context/http";
+import { buildHeaders, getAuth } from "../context/http";
+
 const BASE_URL = "http://localhost:8080/orders";
 
-export async function completeOrder({ token }: { token: string | null }) {
+
+export async function completeOrder() {
   const res = await fetch(`${BASE_URL}/complete`, {
     method: "POST",
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
@@ -14,9 +16,9 @@ export async function completeOrder({ token }: { token: string | null }) {
   return res.json();
 }
 
-export async function getMyOrders({ token }: { token: string | null }) {
+export async function getMyOrders() {
   const res = await fetch(`${BASE_URL}/myOrders`, {
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
@@ -26,9 +28,10 @@ export async function getMyOrders({ token }: { token: string | null }) {
   return res.json();
 }
 
-export async function getPendingOrders({ token }: { token: string | null }) {
+
+export async function getPendingOrders() {
   const res = await fetch(`${BASE_URL}/pending`, {
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
@@ -38,13 +41,11 @@ export async function getPendingOrders({ token }: { token: string | null }) {
   return res.json();
 }
 
-export async function acceptOrder(
-  orderId: number,
-  { token }: { token: string | null }
-) {
+
+export async function acceptOrder(orderId: number) {
   const res = await fetch(`${BASE_URL}/${orderId}/accept`, {
     method: "POST",
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
@@ -54,12 +55,10 @@ export async function acceptOrder(
   return res.json();
 }
 
-export async function getOrderById(
-  id: number,
-  { token }: { token: string | null }
-) {
+
+export async function getOrderById(id: number) {
   const res = await fetch(`${BASE_URL}/${id}`, {
-    headers: buildHeaders({ token, guestId: null }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {

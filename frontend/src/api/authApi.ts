@@ -13,8 +13,15 @@ export async function login(data: any) {
     throw new Error("Login failed");
   }
 
-  const token = await res.text(); 
-  return token;
+  const result = await res.json(); // ✔
+
+  // sačuvaj token
+  localStorage.setItem("token", result.token);
+
+  // opcionalno:
+  localStorage.setItem("username", result.username);
+
+  return result;
 }
 
 export async function register(data: any) {

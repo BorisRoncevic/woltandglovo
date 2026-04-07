@@ -1,16 +1,12 @@
-import { buildHeaders } from "../context/http";
+import { buildHeaders, getAuth } from "../context/http";
+
 const BASE_URL = "http://localhost:8080/cart";
 
-export async function addToCart(
-  itemId: number | string,
-  {
-    token,
-    guestId,
-  }: { token: string | null; guestId: string | null }
-) {
+
+export async function addToCart(itemId: number | string) {
   const res = await fetch(`${BASE_URL}/add?itemId=${itemId}`, {
     method: "POST",
-    headers: buildHeaders({ token, guestId }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
@@ -18,15 +14,10 @@ export async function addToCart(
   }
 }
 
-export async function getCart({
-  token,
-  guestId,
-}: {
-  token: string | null;
-  guestId: string | null;
-}) {
+
+export async function getCart() {
   const res = await fetch(BASE_URL, {
-    headers: buildHeaders({ token, guestId }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (res.status === 401) {
@@ -40,37 +31,28 @@ export async function getCart({
 
   return res.json();
 }
-export async function removeFromCart(
-  itemId: number | string,
-  {
-    token,
-    guestId,
-  }: { token: string | null; guestId: string | null }
-) {
+
+
+export async function removeFromCart(itemId: number | string) {
   const res = await fetch(`${BASE_URL}/delete?itemId=${itemId}`, {
     method: "DELETE",
-    headers: buildHeaders({ token, guestId }),
+    headers: buildHeaders(getAuth()),
   });
 
   if (!res.ok) {
     throw new Error("Failed to remove item from cart");
   }
 }
-  export async function clearCart({
-    token,
-    guestId,
-  }: {
-    token: string | null;
-    guestId: string | null;
-  }) {
-    const cart = await getCart({ token, guestId });
-  
-    if (!cart || !cart.items) return;
-  
-    for (const line of cart.items) {
-      const id = line?.item?.id;
-      if (id != null) {
-        await removeFromCart(id, { token, guestId });
-      }
+
+export async function clearCart() {
+  const cart = await getCart();
+
+  if (!cart?.items) return;
+
+  for (const line of cart.items) {
+    const id = line?.item?.id;
+    if (id != null) {
+      await removeFromCart(id);
     }
   }
+}
