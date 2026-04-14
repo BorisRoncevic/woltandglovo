@@ -1,45 +1,52 @@
 import { useState } from "react";
 import { createItem } from "../api/itemApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function CreateItemPage() {
 
   const navigate = useNavigate();
+  const { restaurantId } = useParams();
 
   const [form, setForm] = useState({
-    ime: "",
-    opis: "",
-    cena: ""
+    name: "",
+    description: "",
+    price: ""
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  
     try {
-      await createItem(form);
-      navigate("/"); 
+      await createItem({
+        ...form,
+        price: Number(form.price),
+        restaurantId: Number(restaurantId)   
+      });
+  
+      navigate("/");
     } catch (err) {
       console.error(err);
     }
   };
-
   return (
     <form onSubmit={handleSubmit}>
       <input
         placeholder="Ime"
-        value={form.ime}
-        onChange={(e) => setForm({ ...form, ime: e.target.value })}
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
 
       <input
         placeholder="Opis"
-        value={form.opis}
-        onChange={(e) => setForm({ ...form, opis: e.target.value })}
+        value={form.description}
+        onChange={(e) => setForm({ ...form, description: e.target.value })}
       />
 
       <input
         placeholder="Cena"
         type="number"
-        value={form.cena}
-        onChange={(e) => setForm({ ...form, cena: e.target.value })}
+        value={form.price}
+        onChange={(e) => setForm({ ...form, price: e.target.value })}
       />
 
       <button type="submit">Kreiraj</button>

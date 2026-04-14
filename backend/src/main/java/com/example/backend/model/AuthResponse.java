@@ -4,7 +4,6 @@ public class AuthResponse {
     private String token;
     private String username;
 
-    // getters
 
     public String getToken() {
         return token;

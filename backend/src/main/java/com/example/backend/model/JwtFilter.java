@@ -30,9 +30,10 @@ public class JwtFilter implements Filter {
             try {
                 String username = JwtUtil.extractUsername(token);
                 System.out.println("Authenticated user: " + username);
+                req.setAttribute("username", username);
+
 
             } catch (Exception e) {
-                // ❗ NE bacamo exception
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 res.getWriter().write("Invalid token");
                 return;

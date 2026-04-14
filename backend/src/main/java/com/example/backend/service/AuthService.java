@@ -1,6 +1,8 @@
 package com.example.backend.service;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.model.AuthResponse;
@@ -19,6 +21,11 @@ public class AuthService {
     public AuthService(UserRepo repo) {
         this.repo = repo;
     }
+
+    @Bean
+public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+}
     public AuthResponse login(LoginRequest request) {
 
         User user = repo.findByUsername(request.username)
@@ -45,7 +52,6 @@ public class AuthService {
         user.setYears(request.years);
         user.setUsername(request.username);
 
-        // 🔐 hash password
         user.setPassword(encoder.encode(request.password));
 
         return repo.save(user);

@@ -42,12 +42,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!token;
 
-  // 🔹 INIT (rehydration iz localStorage)
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedGuestId = localStorage.getItem("guestId");
 
-    // token
+    
     if (storedToken) {
       try {
         setToken(storedToken);
@@ -57,7 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // guestId
     if (storedGuestId) {
       setGuestId(storedGuestId);
     } else {
@@ -69,12 +67,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  // 🔹 LOGIN
   const login = async (data: { username: string; password: string }) => {
     const newToken = await loginApi(data);
-
+  
+   
+  
     localStorage.setItem("token", newToken);
-
     setToken(newToken);
     setUser(decodeToken(newToken));
   };

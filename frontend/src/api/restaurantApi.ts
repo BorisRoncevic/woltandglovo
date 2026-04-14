@@ -13,7 +13,7 @@ export async function getRestaurantsByCity(city: string) {
 }
 
 export async function getRestaurantById(id: number) {
-  const res = await fetch(`${BASE_URL}/${id}`);
+  const res = await fetch(`${BASE_URL}/restaurant/${id}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch restaurant");
@@ -31,6 +31,19 @@ export async function createRestaurant(data: any) {
 
   if (!res.ok) {
     throw new Error("Failed to create restaurant");
+  }
+
+  return res.json();
+}
+
+
+export async function getMyRestaurants() {
+  const res = await fetch(`${BASE_URL}/my`, {
+    headers: buildHeaders(getAuth()), // 🔥 šalje Authorization header
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch my restaurants");
   }
 
   return res.json();

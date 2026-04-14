@@ -11,13 +11,13 @@ export default function HomePage() {
       <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
 
         <button
-          onClick={() => navigate("/restaurants/novisad")}
+          onClick={() => navigate("/restaurants/Novi_Sad")}
         >
           Novi Sad
         </button>
 
         <button
-          onClick={() => navigate("/restaurants/beograd")}
+          onClick={() => navigate("/restaurants/Beograd")}
         >
           Beograd
         </button>

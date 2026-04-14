@@ -2,6 +2,8 @@ package com.example.backend.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,18 +37,24 @@ public class RestaurantController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/details/{id}")
     public Restaurant getById(@PathVariable long id) {
         return service.findById(id);
     }
 
    
     @PostMapping
-    public Restaurant create(HttpServletRequest request,
+    public ResponseEntity<?> create(HttpServletRequest request,
                              @RequestBody Restaurant res) {
+                                System.out.println("USAO U CONTROLER: " );
+
 
         String username = extractUsername(request);
-        return service.createRestaurant(username, res);
+        System.out.println("USERNAME: " + username);
+         service.createRestaurant(username, res);
+         return ResponseEntity.status(HttpStatus.CREATED).body(res)
+         ;
+
     }
 
     @DeleteMapping("/{id}")
@@ -57,9 +65,17 @@ public class RestaurantController {
    
     @GetMapping("/city")
     public List<Restaurant> getByCity(@RequestParam City city) {
+        System.out.println(city);
+
         return service.getByCity(city);
     }
-
+    @GetMapping("/my")
+    public List<Restaurant> getMyRestaurants(HttpServletRequest request) {
+    
+        String username = (String) request.getAttribute("username");
+    
+        return service.getByOwner(username);
+    }
  
     private String extractUsername(HttpServletRequest request) {
 

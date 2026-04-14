@@ -1,5 +1,7 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,8 +18,9 @@ public class CartItem {
     private Long id;
 
     @ManyToOne
-    private Cart cart;
-
+@JoinColumn(name = "cart_id")  
+@JsonBackReference
+private Cart cart;
     @ManyToOne
     @JoinColumn(name = "item_id")
     private Item item;

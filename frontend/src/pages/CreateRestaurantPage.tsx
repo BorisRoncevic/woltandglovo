@@ -8,27 +8,23 @@ export default function CreateRestaurantPage() {
 
   const [form, setForm] = useState({
     name: "",
-    city: "NOVI_SAD",
+    city: "Novi_Sad",
     location: ""
   });
 
   const [error, setError] = useState("");
 
-  export async function createRestaurant(data: any) {
-    const token = localStorage.getItem("token");
-  
-    const res = await fetch(BASE_URL, {
-      method: "POST",
-      headers: buildHeaders({ token, guestId: null }),
-      body: JSON.stringify(data),
-    });
-  
-    if (!res.ok) {
-      throw new Error("Failed to create restaurant");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      console.log("Saljem restoran:", form);
+      await createRestaurant(form);
+      navigate("/my-restaurants");
+    } catch (err) {
+      console.error(err);
+      setError("Greška pri kreiranju restorana");
     }
-  
-    return res.json();
-  }
+  };
 
   return (
     <div style={{ maxWidth: "400px", margin: "50px auto" }}>
@@ -52,8 +48,8 @@ export default function CreateRestaurantPage() {
           }
           style={{ display: "block", marginBottom: "10px", width: "100%" }}
         >
-          <option value="NOVI_SAD">Novi Sad</option>
-          <option value="BEOGRAD">Beograd</option>
+          <option value="Novi_Sad">Novi Sad</option>
+          <option value="Beograd">Beograd</option>
         </select>
 
         <input

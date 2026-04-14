@@ -3,15 +3,11 @@ import { useParams } from "react-router-dom";
 import { getItemsByRestaurant } from "../api/itemApi";
 import { useCart } from "../context/CartContext";
 import ItemCard from "../components/ItemCard";
+import type { Item } from "../model/model";
 
 export default function RestaurantDetails() {
 
-  type Item = {
-    id: number;
-    name: string;
-    description: string;
-    price : number;
-  };
+
 
 
 

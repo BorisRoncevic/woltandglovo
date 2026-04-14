@@ -70,4 +70,13 @@ public class RestaurantService {
     public List<Order> getPendingOrders() {
         return orderRepo.findByStatus(OrderStatus.PENDING);
     }
+
+    public List<Restaurant> getByOwner(String username){
+        User user = userRepo.findByUsername(username)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Restaurant> restorani = restaurantRepo.findByOwner(user);
+
+        return restorani;
+    }
 }

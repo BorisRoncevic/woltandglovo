@@ -18,6 +18,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(username)
+                
                 .setIssuedAt(new Date(0))
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
                 .signWith(SECRET_KEY)

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.model.JwtUtil;
 import com.example.backend.model.Order;
+import com.example.backend.repository.OrderRepo;
+import com.example.backend.repository.RestaurantRepo;
 import com.example.backend.repository.UserRepo;
 import com.example.backend.service.OrderService;
 
@@ -22,10 +24,14 @@ import jakarta.servlet.http.HttpServletRequest;
 public class OrderController {
 
     private final OrderService service;
+    private final RestaurantRepo restaurantRepo;
+    private final OrderRepo repo2;
    // private final UserRepo repo;
 
-    public OrderController(OrderService service,UserRepo repo) {
+    public OrderController(OrderService service,UserRepo repo,RestaurantRepo restaurantRepo,OrderRepo repo2) {
         this.service = service;
+        this.restaurantRepo = restaurantRepo;
+        this.repo2 = repo2;
         //this.repo = repo;
     }
 
@@ -38,6 +44,16 @@ public class OrderController {
         String username = JwtUtil.extractUsername(token);
         return service.findMy(username);
         
+    }
+
+
+    @GetMapping("/restaurant/{id}")
+    public List<Order> getOrdersByRestaurant(
+            @PathVariable Long id,
+            HttpServletRequest request) {
+
+        String username = (String) request.getAttribute("username");
+        return service.getOrdersByRestaurant(id, username);
     }
 
     @GetMapping("/{id}")
@@ -76,5 +92,33 @@ public class OrderController {
         String username = JwtUtil.extractUsername(token);
     
         return service.acceptOrder(username, id);
+    }
+
+    @PostMapping("/{id}/reject")
+    public Order rejectOrder(HttpServletRequest request,
+                             @PathVariable Long id) {
+    
+        String token = request.getHeader("Authorization").substring(7);
+        String username = JwtUtil.extractUsername(token);
+    
+        return service.rejectOrder(username, id);
+    }
+    @PostMapping("/{id}/pickedUp")
+    public Order pickedUp(HttpServletRequest request,
+                             @PathVariable Long id) {
+    
+        String token = request.getHeader("Authorization").substring(7);
+        String username = JwtUtil.extractUsername(token);
+    
+        return service.pickedUp(username, id);
+    }
+    @PostMapping("/{id}/delivered")
+    public Order delivered(HttpServletRequest request,
+                             @PathVariable Long id) {
+    
+        String token = request.getHeader("Authorization").substring(7);
+        String username = JwtUtil.extractUsername(token);
+    
+        return service.delivered(username, id);
     }
 }

@@ -12,7 +12,7 @@ export default function RestaurantCard({ restaurant }: Props) {
 
   return (
     <div
-      onClick={() => navigate(`/restaurants/${restaurant.id}`)}
+      onClick={() => navigate(`/details/${restaurant.id}`)}
       style={{
         border: "1px solid gray",
         margin: "10px",

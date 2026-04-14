@@ -11,13 +11,13 @@ export default function RegisterPage() {
     surname: "",
     years: "",
     username: "",
-    password: ""
+    password: "",
   });
 
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       await register(form);
 

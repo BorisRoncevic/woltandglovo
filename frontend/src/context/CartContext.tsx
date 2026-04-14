@@ -28,7 +28,7 @@ export type CartItem = {
   item: {
     id: number;
     name: string;
-    cena: number;
+    price: number;
   };
   quantity: number;
 };
@@ -47,18 +47,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const loadCart = async () => {
     if ((!token && !guestId) || loading) return;
-
+  
     setLoading(true);
-
+  
     try {
       const data = await getCart();
-      setCart(data);
+  
+      setCart(data); 
+  
     } catch (err: any) {
       if (err.message === "Unauthorized") {
         setCart(null);
         return;
       }
-
+  
       console.error("Cart error:", err);
       setCart(null);
     } finally {

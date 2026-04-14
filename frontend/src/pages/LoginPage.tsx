@@ -14,17 +14,24 @@ export default function LoginPage() {
 
   const [error, setError] = useState("");
 
-  const handleSubmit = async () => {
-
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+  
+    console.log("Pokusaj login:", form);
+  
     try {
-      await login(form);
-
+      const result = await login(form);
+      console.log("Login uspeo, rezultat:", result);
+  
       navigate("/");
-
-    } catch (err) {
+    } catch (err: any) {
+      console.error("Login error:", err);
+      console.error("Message:", err?.message);
       setError("Pogrešan username ili password");
     }
   };
+  
 
   return (
     <div>

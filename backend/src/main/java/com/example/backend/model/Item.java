@@ -1,5 +1,8 @@
 package com.example.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,41 +21,48 @@ public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "ime")
 
-    private String ime;
-    private String Opis;
-    private Integer cena;
+    private String name;
+    @Column(name = "opis")
+
+    private String description;
+    @Column(name = "cena")
+
+    private Integer price;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
+    @JsonIgnore
+
     private Restaurant restaurant;
 
     public Long getId() {
         return id;
     }
 
-    public String getIme() {
-        return ime;
+    public String getName() {
+        return name;
     }
 
-    public void setIme(String ime) {
-        this.ime = ime;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getOpis() {
-        return Opis;
+    public String getDescription() {
+        return description;
     }
 
-    public void setOpis(String Opis) {
-        this.Opis = Opis;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Integer getCena() {
-        return cena;
+    public Integer getPrice() {
+        return price;
     }
 
-    public void setCena(Integer cena) {
-        this.cena = cena;
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public Restaurant getRestaurant() {

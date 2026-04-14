@@ -14,6 +14,7 @@ import com.example.backend.model.OrderStatus;
 public interface OrderRepo extends JpaRepository<Order, Long> {
     List<Order> findByStatus(OrderStatus status);
     List<Order> findByKorisnikId(Long userId);
+    List<Order> findByRestaurantId(Long restaurantId);
 
 
 }

@@ -31,7 +31,7 @@ export default function Navbar() {
           onClick={() => navigate("/cart")}
           style={{ cursor: "pointer" }}
         >
-          🛒
+          
           {!cartLoading && itemCount > 0 && (
             <span className="badge">{itemCount}</span>
           )}

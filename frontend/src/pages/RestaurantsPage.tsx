@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRestaurantsByCity } from "../api/restaurantApi";
-  import RestaurantCard from "../components/RestaurantCard";
+import RestaurantCard from "../components/RestaurantCard";
+import type { Restaurant } from "../model/model";
 export default function RestaurantsPage() {
-
-  type Restaurant = {
-    id: number;
-    name: string;
-  };
 
   const { city } = useParams();
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);

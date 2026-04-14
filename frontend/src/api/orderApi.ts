@@ -28,6 +28,18 @@ export async function getMyOrders() {
   return res.json();
 }
 
+export async function getOrdersByRestaurant(id: number) {
+  const res = await fetch(`http://localhost:8080/orders/restaurant/${id}`, {
+    headers: buildHeaders(getAuth()),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch orders");
+  }
+
+  return res.json();
+}
+
 
 export async function getPendingOrders() {
   const res = await fetch(`${BASE_URL}/pending`, {
@@ -54,7 +66,42 @@ export async function acceptOrder(orderId: number) {
 
   return res.json();
 }
+export async function rejectOrder(orderId: number) {
+  const res = await fetch(`${BASE_URL}/${orderId}/reject`, {
+    method: "POST",
+    headers: buildHeaders(getAuth()),
+  });
 
+  if (!res.ok) {
+    throw new Error("Failed to reject order");
+  }
+
+  return res.json();
+}
+export async function pickedUp(orderId: number) {
+  const res = await fetch(`${BASE_URL}/${orderId}/pickedUp`, {
+    method: "POST",
+    headers: buildHeaders(getAuth()),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to reject order");
+  }
+
+  return res.json();
+}
+export async function delivered(orderId: number) {
+  const res = await fetch(`${BASE_URL}/${orderId}/delivered`, {
+    method: "POST",
+    headers: buildHeaders(getAuth()),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to reject order");
+  }
+
+  return res.json();
+}
 
 export async function getOrderById(id: number) {
   const res = await fetch(`${BASE_URL}/${id}`, {

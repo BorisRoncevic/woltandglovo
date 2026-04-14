@@ -1,12 +1,19 @@
 package com.example.backend.model;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
@@ -14,22 +21,31 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "restaurants")
+
 public class Restaurant {
 
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     private String name;
+    @Enumerated(EnumType.STRING)
     private City city;
 
     private String location;
 
     @OneToMany(mappedBy = "restaurant")
-    private  ArrayList<Item> items;
+    @JsonIgnore
+
+    private  List<Item> items;
 
     @ManyToOne
 @JoinColumn(name = "owner_id")
+@JsonIgnore
+
 private User owner;
 
     public Long getId() {
@@ -56,11 +72,11 @@ private User owner;
         this.location = location;
     }
 
-    public ArrayList<Item> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setItems(ArrayList<Item> items) {
+    public void setItems(List<Item> items) {
         this.items = items;
     }
 
