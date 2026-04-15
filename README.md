@@ -92,33 +92,6 @@ PENDING → ACCEPTED → PREPARING → DELIVERING → DELIVERED
 
 ---
 
-## Project Structure
-
-```
-backend/
-  controller/
-  service/
-  model/
-  repository/
-
-frontend/
-  pages/
-  components/
-  context/
-  api/
-```
-
----
-
-
-## Notes
-
-* Backend runs on port 8080
-* Frontend runs on port 5173
-* Ensure that port 8080 is not already in use before starting the backend
-
----
-
 ## Summary
 
 The application demonstrates:
