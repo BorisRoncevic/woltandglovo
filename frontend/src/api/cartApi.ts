@@ -13,6 +13,16 @@ export async function addToCart(itemId: number | string) {
     throw new Error("Failed to add item to cart");
   }
 }
+export async function mergeCart(guestId: string) {
+  const res = await fetch(`${BASE_URL}/merge?guestId=${guestId}`, {
+    method: "POST",
+    headers: buildHeaders(getAuth()),
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to merge cart");
+  }
+}
 
 
 export async function getCart() {

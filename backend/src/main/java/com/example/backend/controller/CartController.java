@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,22 @@ public class CartController {
         String userKey = resolveUser(request);
         service.addToCart(userKey, itemId);
     }
+
+    @PostMapping("/merge")
+public ResponseEntity<?> mergeCart(HttpServletRequest request,
+                                   @RequestParam String guestId) {
+
+    // ✔ iz JWT filtera
+    String username = (String) request.getAttribute("username");
+
+    if (username == null) {
+        return ResponseEntity.status(401).body("Unauthorized");
+    }
+
+    service.mergeCart(username, guestId);
+
+    return ResponseEntity.ok().build();
+}
 
     @GetMapping
     public Cart getCart(HttpServletRequest request) {

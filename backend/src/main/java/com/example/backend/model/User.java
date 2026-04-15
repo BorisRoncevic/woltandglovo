@@ -34,7 +34,7 @@ public class User {
     private String username;
     private String password;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    @JsonIgnore    🔥 OBAVEZNO
+    @JsonIgnore  
 
     private List<Restaurant> restaurants;
     public Long getId() {

@@ -11,6 +11,7 @@ import {
   addToCart,
   removeFromCart,
   clearCart,
+  mergeCart,
 } from "../api/cartApi";
 
 import { useAuth } from "./AuthContext";
@@ -46,21 +47,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [initialized, setInitialized] = useState(false);
 
   const loadCart = async () => {
-    if ((!token && !guestId) || loading) return;
+    if (!token && !guestId) return;
   
     setLoading(true);
   
     try {
       const data = await getCart();
-  
-      setCart(data); 
-  
+      setCart(data);
     } catch (err: any) {
       if (err.message === "Unauthorized") {
         setCart(null);
         return;
       }
-  
       console.error("Cart error:", err);
       setCart(null);
     } finally {
@@ -69,8 +67,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    setInitialized(false);
-  }, [token, guestId]);
+    if (token && guestId) {
+      mergeCart(guestId).then(() => {
+        refresh(); // reload cart
+      });
+    }
+  }, [token]);
 
   useEffect(() => {
     if (!token && !guestId) {

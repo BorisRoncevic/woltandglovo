@@ -1,0 +1,38 @@
+.home-container {
+    text-align: center;
+    margin-top: 80px;
+  }
+  
+  .home-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+  
+  .city-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .city-button {
+    padding: 12px 24px;
+    font-size: 16px;
+  
+    border: none;
+    border-radius: 10px;
+  
+    background-color: #3498db;
+    color: white;
+  
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .city-button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px);
+  }
+  
+  .city-button:active {
+    transform: scale(0.98);
+  }

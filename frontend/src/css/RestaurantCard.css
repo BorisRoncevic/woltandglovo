@@ -1,0 +1,26 @@
+.restaurant-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+  
+    padding: 15px;
+    background-color: #fafafa;
+  
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .restaurant-card:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-3px);
+  }
+  
+  .restaurant-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .restaurant-extra {
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+  }

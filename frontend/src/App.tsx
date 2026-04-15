@@ -16,10 +16,11 @@ import CartPage from "./pages/CartPage";
 import MyRestaurants from "./pages/MyRestaurants";
 import MyOrdersPage from "./pages/MyOrdersPage";
 
+
 export default function App() {
   return (
     <CartProvider>
-      <Navbar />   {/* 🔥 OVO FALI */}
+      <Navbar />  
 
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -70,7 +71,6 @@ export default function App() {
           element={<OrdersPage/>}
         />
 
-        {/* 🔥 DODAJ OVO */}
         <Route
           path="/cart"
           element={

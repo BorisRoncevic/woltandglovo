@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
-import type { CartItem } from "../model/model";
+import "../css/Navbar.css";
 
 export default function Navbar() {
   const { isAuthenticated, user, logout, loading: authLoading } = useAuth();
@@ -11,13 +11,11 @@ export default function Navbar() {
 
   if (authLoading) return null;
 
-
-
-    const itemCount =
-  cart?.items?.reduce<number>(
-    (sum, i) => sum + i.quantity,
-    0
-  ) ?? 0;
+  const itemCount =
+    cart?.items?.reduce<number>(
+      (sum, i) => sum + i.quantity,
+      0
+    ) ?? 0;
 
   return (
     <nav className="navbar">
@@ -26,12 +24,27 @@ export default function Navbar() {
       </div>
 
       <div className="nav-right">
+        {isAuthenticated && (
+          <>
+            <button onClick={() => navigate("/create-restaurant")}>
+              Create Restaurant
+            </button>
+
+            <button onClick={() => navigate("/my-restaurants")}>
+              My Restaurants
+            </button>
+
+            <button onClick={() => navigate("/my-orders")}>
+              My Orders
+            </button>
+          </>
+        )}
+
         <div
           className="cart"
           onClick={() => navigate("/cart")}
-          style={{ cursor: "pointer" }}
         >
-          
+          🛒
           {!cartLoading && itemCount > 0 && (
             <span className="badge">{itemCount}</span>
           )}
@@ -48,8 +61,9 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <span className="user">{user?.username}</span>
+
             <button
+              className="logout"
               onClick={() => {
                 logout();
                 navigate("/");

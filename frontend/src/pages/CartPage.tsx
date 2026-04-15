@@ -1,29 +1,22 @@
 import { useEffect } from "react";
 import { completeOrder } from "../api/orderApi";
 import { useCart } from "../context/CartContext";
+import "../css/CartPage.css";
 
 export default function CartPage() {
   const { cart, loading, removeItem, refresh } = useCart();
 
   useEffect(() => {
-    console.log("REFRESHING CART...");
     refresh();
   }, []);
-  
-  console.log("CART STATE:", cart);
-  console.log("LOADING:", loading);
-  
+
   if (loading || cart === null) {
-    console.log("STILL LOADING...");
-    return <p>Loading...</p>;
+    return <p className="empty-text">Loading...</p>;
   }
-  
+
   if (!cart.items || cart.items.length === 0) {
-    console.log("EMPTY CART");
-    return <p>Korpa je prazna</p>;
+    return <p className="empty-text">Korpa je prazna</p>;
   }
-  
-  console.log("RENDERING ITEMS:", cart.items);
 
   const handleRemove = async (id: number) => {
     await removeItem(id);
@@ -34,45 +27,41 @@ export default function CartPage() {
     await refresh();
   };
 
-  if (loading || cart === null) {
-    return <p>Loading...</p>;
-  }
-
-  if (!cart.items || cart.items.length === 0) {
-    return <p>Korpa je prazna</p>;
-  }
-
   const total = cart.items.reduce(
     (sum, ci) => sum + ci.item.price * ci.quantity,
     0
   );
 
   return (
-    <div style={{ maxWidth: "500px", margin: "50px auto" }}>
-      <h2>Korpa</h2>
+    <div className="cart-container">
+      <h2 className="cart-title">Korpa</h2>
 
       {cart.items.map(ci => (
-        <div
-          key={ci.item.id}  
-          style={{
-            border: "1px solid gray",
-            marginBottom: "10px",
-            padding: "10px"
-          }}
-        >
-          <h4>{ci.item.name}</h4>
-          <p>Količina: {ci.quantity}</p>
-          <p>Cena: {ci.item.price * ci.quantity} RSD</p>
+        <div key={ci.item.id} className="cart-item">
+          <div className="cart-item-name">{ci.item.name}</div>
 
-          <button onClick={() => handleRemove(ci.item.id)}>
+          <div className="cart-item-info">
+            Količina: {ci.quantity}
+          </div>
+
+          <div className="cart-item-info">
+            Cena: {ci.item.price * ci.quantity} RSD
+          </div>
+
+          <button
+            className="cart-remove"
+            onClick={() => handleRemove(ci.item.id)}
+          >
             Ukloni
           </button>
         </div>
       ))}
 
-      <h3>Ukupno: {total} RSD</h3>
+      <div className="cart-total">
+        Ukupno: {total} RSD
+      </div>
 
-      <button onClick={handleOrder}>
+      <button className="cart-order" onClick={handleOrder}>
         Poruči
       </button>
     </div>

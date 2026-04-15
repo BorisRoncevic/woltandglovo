@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getOrdersByRestaurant, acceptOrder, rejectOrder, pickedUp } from "../api/orderApi";
+import {
+  getOrdersByRestaurant,
+  acceptOrder,
+  rejectOrder,
+  pickedUp
+} from "../api/orderApi";
+import "../css/OrdersPage.css";
 
 export default function OrdersPage() {
   const { id } = useParams();
@@ -17,51 +23,64 @@ export default function OrdersPage() {
 
   const handleAccept = async (orderId: number) => {
     await acceptOrder(orderId);
-    loadOrders(); 
+    loadOrders();
   };
 
   const handleReject = async (orderId: number) => {
     await rejectOrder(orderId);
-    loadOrders(); 
+    loadOrders();
+  };
+
+  const handlePickedUp = async (orderId: number) => {
+    await pickedUp(orderId);
+    loadOrders(); // 🔥 KLJUČNO
   };
 
   return (
-    <div>
-      <h2>Porudžbine</h2>
+    <div className="orders-container">
+      <h2 className="orders-title">Porudžbine</h2>
 
       {orders.map(order => (
-  <div
-    key={order.id}
-    style={{
-      border: "1px solid gray",
-      margin: "10px",
-      padding: "10px"
-    }}
-  >
-    <p>Status: {order.status}</p>
+        <div key={order.id} className="order-card">
 
-    {/* PENDING */}
-    {order.status === "PENDING" && (
-      <>
-        <button onClick={() => handleAccept(order.id)}>
-          Accept
-        </button>
+          <div className="order-status">
+            Status: {order.status}
+          </div>
 
-        <button onClick={() => handleReject(order.id)}>
-          Reject
-        </button>
-      </>
-    )}
+          <div className="order-actions">
 
-    {/* ACCEPTED */}
-    {order.status === "PREPARING" && (
-      <button onClick={() => pickedUp(order.id)}>
-        Picked Up
-      </button>
-    )}
+            {/* PENDING */}
+            {order.status === "PENDING" && (
+              <>
+                <button
+                  className="btn btn-accept"
+                  onClick={() => handleAccept(order.id)}
+                >
+                  Accept
+                </button>
 
-  </div>
-))}
+                <button
+                  className="btn btn-reject"
+                  onClick={() => handleReject(order.id)}
+                >
+                  Reject
+                </button>
+              </>
+            )}
+
+            {/* PREPARING */}
+            {order.status === "PREPARING" && (
+              <button
+                className="btn btn-picked"
+                onClick={() => handlePickedUp(order.id)}
+              >
+                Picked Up
+              </button>
+            )}
+
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

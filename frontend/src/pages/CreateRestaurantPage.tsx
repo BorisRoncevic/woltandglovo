@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { createRestaurant } from "../api/restaurantApi";
 import { useNavigate } from "react-router-dom";
+import "../css/CreateRestaurant.css";
 
 export default function CreateRestaurantPage() {
-
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -17,55 +17,54 @@ export default function CreateRestaurantPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      console.log("Saljem restoran:", form);
       await createRestaurant(form);
       navigate("/my-restaurants");
     } catch (err) {
-      console.error(err);
       setError("Greška pri kreiranju restorana");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "50px auto" }}>
-      <h2>Kreiraj restoran</h2>
+    <div className="create-container">
+      <h2 className="create-title">Kreiraj restoran</h2>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="create-form">
 
         <input
+          className="create-input"
           placeholder="Naziv restorana"
           value={form.name}
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
           }
-          style={{ display: "block", marginBottom: "10px", width: "100%" }}
         />
 
         <select
+          className="create-select"
           value={form.city}
           onChange={(e) =>
             setForm({ ...form, city: e.target.value })
           }
-          style={{ display: "block", marginBottom: "10px", width: "100%" }}
         >
           <option value="Novi_Sad">Novi Sad</option>
           <option value="Beograd">Beograd</option>
         </select>
 
         <input
+          className="create-input"
           placeholder="Adresa (npr. Bulevar Oslobođenja 10)"
           value={form.location}
           onChange={(e) =>
             setForm({ ...form, location: e.target.value })
           }
-          style={{ display: "block", marginBottom: "10px", width: "100%" }}
         />
 
-        <button type="submit">Kreiraj</button>
-
+        <button className="create-button" type="submit">
+          Kreiraj
+        </button>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 }
